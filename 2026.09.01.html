@@ -47,7 +47,8 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      margin-top: 160px;
+      margin-top: 200px;
+      margin-left: 50px;
     }
 
     .emoji-item {
@@ -77,22 +78,21 @@
 
     .emoji-label {
       font-size: 3rem;
-      font-weight: bold;
-      color: #ffffff;
+      font-weight: 900;
       margin-top: 6px;
-      text-shadow:
-        -1.5px -1.5px 0 #000,
-        1.5px -1.5px 0 #000,
-        -1.5px 1.5px 0 #000,
-        1.5px 1.5px 0 #000,
-        0px 2px 4px rgba(0, 0, 0, 0.8);
+      letter-spacing: 1.5px;
+      background: linear-gradient(180deg, #FFE600 0%, #FF9900 60%, #FF5500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter:
+        drop-shadow(2px 2px 0px #000000) drop-shadow(-2px -2px 0px #000000) drop-shadow(2px -2px 0px #000000) drop-shadow(-2px 2px 0px #000000) drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75));
     }
 
     /* Jar Overlay style */
     .jar-emoji {
       position: absolute;
-      width: 35px;
-      height: 35px;
+      width: 30px;
+      height: 30px;
       top: 0;
       left: 0;
       pointer-events: none;
@@ -107,6 +107,7 @@
       flex-grow: 1;
       align-items: flex-end;
       padding-bottom: 130px;
+      padding-left: 50px;
     }
 
     .jar-wrapper {
@@ -120,23 +121,22 @@
     .jar-label {
       position: absolute;
       bottom: -120px;
-      font-size: 3.5rem;
+      font-size: 3rem;
       font-weight: 900;
       color: #ffffff;
       text-align: center;
-      line-height: 0.9;
-      text-shadow:
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000,
-        2px 2px 0 #000,
-        0px 3px 6px rgba(0, 0, 0, 0.9);
+      line-height: 1.25;
+      letter-spacing: 1.5px;
+      background: linear-gradient(180deg, #FFE600 0%, #FF9900 60%, #FF5500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter:
+        drop-shadow(2px 2px 0px #000000) drop-shadow(-2px -2px 0px #000000) drop-shadow(2px -2px 0px #000000) drop-shadow(-2px 2px 0px #000000) drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75));
 
       margin-bottom: 8px;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
-      letter-spacing: 1px;
     }
 
     .jar-container-inner {
@@ -152,10 +152,20 @@
       height: auto;
       margin-left: 8px;
       transform-origin: bottom center;
-      filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.8)) drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25));
       position: absolute;
       bottom: 0;
       left: -65px;
+      filter:
+        drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.35)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
+      outline: 1px solid transparent;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+    }
+
+    /* Interactive hover scale */
+    .tumbler-img:hover {
+      transform: scale(1.08);
+      filter:
+        drop-shadow(0px 12px 18px rgba(0, 0, 0, 0.45)) drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.25));
     }
 
     .tumbler-img.wobble {
@@ -194,7 +204,7 @@
 
     .jar {
       width: calc(25vw - 80px);
-      height: 45vh;
+      height: 40vh;
       max-height: 500px;
       position: relative;
       transition: transform 0.2s;
@@ -259,7 +269,7 @@
       <div class="counter" id="count-excited">0</div>
       <div class="jar-label">興奮<br>Exicted</div>
     </div>
-    
+
     <div class="jar-wrapper">
       <div class="jar-container-inner">
         <div class="jar" id="jar-eager" data-category="eager"></div>
@@ -278,18 +288,18 @@
       <div class="jar-label">緊張<br>Nervous</div>
     </div>
 
-    
+
   </div>
 
   <!-- <button class="btn-reset" onclick="initBoard()">重設</button> -->
 
   <script>
     const emojiData = [
-      { src: 'imgs/happy.webp', label: '開心', category: 'happy' },
-      { src: 'imgs/exicted.webp', label: '興奮', category: 'excited' },
-      { src: 'imgs/eager.webp', label: '期待', category: 'eager' },
-      { src: 'imgs/nervous.webp', label: '緊張', category: 'nervous' },
-      
+      {src: 'imgs/happy.webp', label: '開心', category: 'happy'},
+      {src: 'imgs/exicted.webp', label: '興奮', category: 'excited'},
+      {src: 'imgs/eager.webp', label: '期待', category: 'eager'},
+      {src: 'imgs/nervous.webp', label: '緊張', category: 'nervous'},
+
     ];
 
     const jarIds = ['jar-happy', 'jar-excited', 'jar-nervous', 'jar-eager'];
@@ -309,113 +319,102 @@
         const itemWrapper = document.createElement('div');
         itemWrapper.classList.add('emoji-item');
 
-        const img = document.createElement('img');
-        img.classList.add('floating-emoji');
-        img.src = data.src;
-
         const label = document.createElement('div');
         label.classList.add('emoji-label');
         label.textContent = data.label;
 
+        const img = document.createElement('img');
+        img.classList.add('floating-emoji');
+        img.src = data.src;
+
         const item = {
-          element: img,
           src: data.src,
           category: data.category,
-          radius: 40
+          radius: 60
         };
 
+        // Pass the event and item data (not the original DOM element)
         img.addEventListener('pointerdown', (e) => startPointerDrag(e, item));
 
-        itemWrapper.appendChild(img);
         itemWrapper.appendChild(label);
+        itemWrapper.appendChild(img);
         pool.appendChild(itemWrapper);
       });
     }
 
     function startPointerDrag(e, item) {
-      item.element.classList.add('dragging');
+      // Prevent browser's native HTML5 image drag behavior (crucial for mouse)
+      e.preventDefault();
+
+      // Create clone image for dragging so original remains at top
+      const dragClone = document.createElement('img');
+      dragClone.src = item.src;
+      dragClone.classList.add('floating-emoji', 'dragging');
+
+      // Set position directly and bypass mouse collisions with pointer-events
+      dragClone.style.position = 'fixed';
+      dragClone.style.pointerEvents = 'none';
+      dragClone.style.zIndex = '9999';
+      document.body.appendChild(dragClone);
 
       const pointerId = e.pointerId;
-      item.element.setPointerCapture(pointerId);
-
-      let lastX = e.clientX;
-      let lastY = e.clientY;
 
       const updatePosition = (x, y) => {
-        item.element.style.left = (x - item.radius) + 'px';
-        item.element.style.top = (y - item.radius) + 'px';
+        dragClone.style.left = (x - item.radius) + 'px';
+        dragClone.style.top = (y - item.radius) + 'px';
       };
 
-      updatePosition(lastX, lastY);
+      updatePosition(e.clientX, e.clientY);
 
       const onPointerMove = (moveEvt) => {
         if (moveEvt.pointerId !== pointerId) return;
-        lastX = moveEvt.clientX;
-        lastY = moveEvt.clientY;
-
-        updatePosition(lastX, lastY);
-        checkJarHover(lastX, lastY, item.element, item.category);
+        updatePosition(moveEvt.clientX, moveEvt.clientY);
+        checkJarHover(moveEvt.clientX, moveEvt.clientY, item.category);
       };
 
       const onPointerUp = (upEvt) => {
         if (upEvt.pointerId !== pointerId) return;
 
-        item.element.classList.remove('dragging');
-        item.element.style.left = '';
-        item.element.style.top = '';
+        // Clean up event listeners from window
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('pointercancel', onPointerUp);
 
-        if (item.element.hasPointerCapture(pointerId)) {
-          item.element.releasePointerCapture(pointerId);
-        }
-
-        item.element.removeEventListener('pointermove', onPointerMove);
-        item.element.removeEventListener('pointerup', onPointerUp);
-        item.element.removeEventListener('pointercancel', onPointerUp);
-
-        item.element.style.display = 'none';
-        const dropTarget = document.elementFromPoint(lastX, lastY);
-        item.element.style.display = '';
-
+        // Identify target element under release coordinates
+        const dropTarget = document.elementFromPoint(upEvt.clientX, upEvt.clientY);
         const targetJar = dropTarget ? dropTarget.closest('.jar') : null;
 
-        // Validation: Emoji must match target bottle category
         if (targetJar) {
           const jarCategory = targetJar.getAttribute('data-category');
           if (jarCategory === item.category) {
             const rect = targetJar.getBoundingClientRect();
-            const dropXRatio = (lastX - rect.left) / rect.width;
+            const dropXRatio = (upEvt.clientX - rect.left) / rect.width;
             addBouncingEmojiToJar(targetJar.id, item.src, dropXRatio);
             triggerTumblerAnimation(jarCategory);
           }
         }
 
+        dragClone.remove();
         clearJarHovers();
       };
 
-      item.element.addEventListener('pointermove', onPointerMove);
-      item.element.addEventListener('pointerup', onPointerUp);
-      item.element.addEventListener('pointercancel', onPointerUp);
+      // Attach listeners to window so dragging stays active if mouse moves quickly
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointercancel', onPointerUp);
     }
 
-    function checkJarHover(clientX, clientY, draggedEl, emojiCategory) {
+    function checkJarHover(clientX, clientY, emojiCategory) {
       clearJarHovers();
 
-      if (draggedEl) draggedEl.style.display = 'none';
       const dropTarget = document.elementFromPoint(clientX, clientY);
-      if (draggedEl) draggedEl.style.display = '';
-
       const targetJar = dropTarget ? dropTarget.closest('.jar') : null;
-      if (targetJar) {
-        // Highlight container only when dragging over matching bottle
-        if (targetJar.getAttribute('data-category') === emojiCategory) {
-          targetJar.classList.add('drag-over');
-        }
+
+      if (targetJar && targetJar.getAttribute('data-category') === emojiCategory) {
+        targetJar.classList.add('drag-over');
       }
     }
 
-    function clearJarHovers() {
-      document.querySelectorAll('.jar').forEach(jar => jar.classList.remove('drag-over'));
-    }
 
     function triggerTumblerAnimation(category) {
       const tumbler = document.getElementById(`tumbler-${category}`);
@@ -446,19 +445,19 @@
       const emojiRadius = (tempImg.clientWidth || 30) / 2;
       container.removeChild(tempImg);
 
-      const { Engine, Bodies, Composite, Events } = Matter;
+      const {Engine, Bodies, Composite, Events} = Matter;
 
       const engine = Engine.create();
       engine.world.gravity.y = 1.2;
 
       const wallThickness = 60;
 
-      const groundY = height * 0.92 - emojiRadius;
-      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, { isStatic: true });
+      const groundY = height * 0.95 - emojiRadius;
+      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, {isStatic: true});
 
       const wallPadding = width * 0.17 + emojiRadius;
-      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
-      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, {isStatic: true});
+      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, {isStatic: true});
 
       const leftLip = Bodies.rectangle(width * 0.2, height * 0.2, width * 0.25, 20, {
         isStatic: true,
@@ -490,14 +489,14 @@
       }
       requestAnimationFrame(step);
 
-      jarPhysics[jarId] = { engine, bodiesCount: 0 };
+      jarPhysics[jarId] = {engine, bodiesCount: 0};
     }
 
     function addBouncingEmojiToJar(jarId, imgSrc, dropXRatio) {
       const p = jarPhysics[jarId];
       if (!p) return;
 
-      const { Bodies, Composite } = Matter;
+      const {Bodies, Composite} = Matter;
       const container = document.getElementById(jarId);
       const width = container.clientWidth;
 
