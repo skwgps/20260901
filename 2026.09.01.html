@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>校園好精神開學日_心情</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+      touch-action: none;
+    }
+
+    html,
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(imgs/bg.jpg);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+    }
+
+    .emoji-pool {
+      width: 95vw;
+      height: 25vh;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 160px;
+    }
+
+    .emoji-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .floating-emoji {
+      width: 170px;
+      height: 170px;
+      cursor: grab;
+      user-select: none;
+      filter: drop-shadow(2px 2px 6px rgba(255, 255, 255, 0.9)) drop-shadow(2px 6px 10px rgba(0, 0, 0, 0.35));
+      transition: transform 0.15s ease-in-out;
+      z-index: 5;
+    }
+
+    .floating-emoji.dragging {
+      cursor: grabbing;
+      transform: scale(1.3);
+      z-index: 9999 !important;
+      position: fixed !important;
+      pointer-events: none !important;
+    }
+
+    .emoji-label {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-top: 6px;
+      text-shadow:
+        -1.5px -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        1.5px 1.5px 0 #000,
+        0px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Jar Overlay style */
+    .jar-emoji {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      transform-origin: center center;
+    }
+
+    .jars-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 2vw;
+      width: 95vw;
+      flex-grow: 1;
+      align-items: flex-end;
+      padding-bottom: 130px;
+    }
+
+    .jar-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      flex: 1;
+    }
+
+    .jar-label {
+      position: absolute;
+      bottom: -120px;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      line-height: 0.9;
+      text-shadow:
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000,
+        0px 3px 6px rgba(0, 0, 0, 0.9);
+
+      margin-bottom: 8px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      letter-spacing: 1px;
+    }
+
+    .jar-container-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* 不倒翁 Style */
+    .tumbler-img {
+      width: 110px;
+      height: auto;
+      margin-left: 8px;
+      transform-origin: bottom center;
+      filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.8)) drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25));
+      position: absolute;
+      bottom: 0;
+      left: -65px;
+    }
+
+    .tumbler-img.wobble {
+      animation: tumblerWobble 1.2s ease-in-out;
+    }
+
+    @keyframes tumblerWobble {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      15% {
+        transform: rotate(-15deg);
+      }
+
+      30% {
+        transform: rotate(20deg);
+      }
+
+      45% {
+        transform: rotate(-15deg);
+      }
+
+      60% {
+        transform: rotate(10deg);
+      }
+
+      75% {
+        transform: rotate(-5deg);
+      }
+
+      100% {
+        transform: rotate(0deg);
+      }
+    }
+
+    .jar {
+      width: calc(25vw - 80px);
+      height: 45vh;
+      max-height: 500px;
+      position: relative;
+      transition: transform 0.2s;
+      background-image: url('imgs/bottle.gif');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(8px 8px 16px rgba(0, 0, 0, 0.25));
+    }
+
+    .jar.drag-over {
+      transform: scale(1.05);
+    }
+
+    .counter {
+      position: absolute;
+      bottom: 10px;
+      background: #0284c7;
+      color: white;
+      font-weight: 1000;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-reset {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      padding: 8px 16px;
+      background: #ffffff;
+      color: #0284c7;
+      border: 2px solid #0284c7;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="emoji-pool" id="emojiPool"></div>
+
+  <div class="jars-container">
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-happy" data-category="happy"></div>
+        <img src="imgs/不倒翁_頁面_1.png" class="tumbler-img" id="tumbler-happy" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-happy">0</div>
+      <div class="jar-label">開心<br>Happy</div>
+    </div>
+
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-excited" data-category="excited"></div>
+        <img src="imgs/不倒翁_頁面_3.png" class="tumbler-img" id="tumbler-excited" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-excited">0</div>
+      <div class="jar-label">興奮<br>Exicted</div>
+    </div>
+
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-nervous" data-category="nervous"></div>
+        <img src="imgs/不倒翁_頁面_4.png" class="tumbler-img" id="tumbler-nervous" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-nervous">0</div>
+      <div class="jar-label">緊張<br>Nervous</div>
+    </div>
+
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-eager" data-category="eager"></div>
+        <img src="imgs/不倒翁_頁面_5.png" class="tumbler-img" id="tumbler-eager" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-eager">0</div>
+      <div class="jar-label">期待<br>Eager</div>
+    </div>
+  </div>
+
+  <!-- <button class="btn-reset" onclick="initBoard()">重設</button> -->
+
+  <script>
+    const emojiData = [
+      { src: 'imgs/happy.webp', label: '開心', category: 'happy' },
+      { src: 'imgs/exicted.webp', label: '興奮', category: 'excited' },
+      { src: 'imgs/nervous.webp', label: '緊張', category: 'nervous' },
+      { src: 'imgs/eager.webp', label: '期待', category: 'eager' }
+    ];
+
+    const jarIds = ['jar-happy', 'jar-excited', 'jar-nervous', 'jar-eager'];
+    const jarPhysics = {};
+
+    window.onload = initBoard;
+
+    function initBoard() {
+      const pool = document.getElementById('emojiPool');
+      pool.innerHTML = '';
+
+      document.querySelectorAll('.counter').forEach(el => el.textContent = '0');
+
+      jarIds.forEach(id => setupJarPhysics(id));
+
+      emojiData.forEach((data) => {
+        const itemWrapper = document.createElement('div');
+        itemWrapper.classList.add('emoji-item');
+
+        const img = document.createElement('img');
+        img.classList.add('floating-emoji');
+        img.src = data.src;
+
+        const label = document.createElement('div');
+        label.classList.add('emoji-label');
+        label.textContent = data.label;
+
+        const item = {
+          element: img,
+          src: data.src,
+          category: data.category,
+          radius: 40
+        };
+
+        img.addEventListener('pointerdown', (e) => startPointerDrag(e, item));
+
+        itemWrapper.appendChild(img);
+        itemWrapper.appendChild(label);
+        pool.appendChild(itemWrapper);
+      });
+    }
+
+    function startPointerDrag(e, item) {
+      item.element.classList.add('dragging');
+
+      const pointerId = e.pointerId;
+      item.element.setPointerCapture(pointerId);
+
+      let lastX = e.clientX;
+      let lastY = e.clientY;
+
+      const updatePosition = (x, y) => {
+        item.element.style.left = (x - item.radius) + 'px';
+        item.element.style.top = (y - item.radius) + 'px';
+      };
+
+      updatePosition(lastX, lastY);
+
+      const onPointerMove = (moveEvt) => {
+        if (moveEvt.pointerId !== pointerId) return;
+        lastX = moveEvt.clientX;
+        lastY = moveEvt.clientY;
+
+        updatePosition(lastX, lastY);
+        checkJarHover(lastX, lastY, item.element, item.category);
+      };
+
+      const onPointerUp = (upEvt) => {
+        if (upEvt.pointerId !== pointerId) return;
+
+        item.element.classList.remove('dragging');
+        item.element.style.left = '';
+        item.element.style.top = '';
+
+        if (item.element.hasPointerCapture(pointerId)) {
+          item.element.releasePointerCapture(pointerId);
+        }
+
+        item.element.removeEventListener('pointermove', onPointerMove);
+        item.element.removeEventListener('pointerup', onPointerUp);
+        item.element.removeEventListener('pointercancel', onPointerUp);
+
+        item.element.style.display = 'none';
+        const dropTarget = document.elementFromPoint(lastX, lastY);
+        item.element.style.display = '';
+
+        const targetJar = dropTarget ? dropTarget.closest('.jar') : null;
+
+        // Validation: Emoji must match target bottle category
+        if (targetJar) {
+          const jarCategory = targetJar.getAttribute('data-category');
+          if (jarCategory === item.category) {
+            const rect = targetJar.getBoundingClientRect();
+            const dropXRatio = (lastX - rect.left) / rect.width;
+            addBouncingEmojiToJar(targetJar.id, item.src, dropXRatio);
+            triggerTumblerAnimation(jarCategory);
+          }
+        }
+
+        clearJarHovers();
+      };
+
+      item.element.addEventListener('pointermove', onPointerMove);
+      item.element.addEventListener('pointerup', onPointerUp);
+      item.element.addEventListener('pointercancel', onPointerUp);
+    }
+
+    function checkJarHover(clientX, clientY, draggedEl, emojiCategory) {
+      clearJarHovers();
+
+      if (draggedEl) draggedEl.style.display = 'none';
+      const dropTarget = document.elementFromPoint(clientX, clientY);
+      if (draggedEl) draggedEl.style.display = '';
+
+      const targetJar = dropTarget ? dropTarget.closest('.jar') : null;
+      if (targetJar) {
+        // Highlight container only when dragging over matching bottle
+        if (targetJar.getAttribute('data-category') === emojiCategory) {
+          targetJar.classList.add('drag-over');
+        }
+      }
+    }
+
+    function clearJarHovers() {
+      document.querySelectorAll('.jar').forEach(jar => jar.classList.remove('drag-over'));
+    }
+
+    function triggerTumblerAnimation(category) {
+      const tumbler = document.getElementById(`tumbler-${category}`);
+      if (tumbler) {
+        tumbler.classList.remove('wobble');
+        // Trigger reflow to restart CSS animation
+        void tumbler.offsetWidth;
+        tumbler.classList.add('wobble');
+      }
+    }
+
+    function setupJarPhysics(jarId) {
+      const container = document.getElementById(jarId);
+      container.innerHTML = '';
+
+      if (jarPhysics[jarId]) {
+        Matter.Engine.clear(jarPhysics[jarId].engine);
+        delete jarPhysics[jarId];
+      }
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      const tempImg = document.createElement('img');
+      tempImg.classList.add('jar-emoji');
+      tempImg.style.visibility = 'hidden';
+      container.appendChild(tempImg);
+      const emojiRadius = (tempImg.clientWidth || 30) / 2;
+      container.removeChild(tempImg);
+
+      const { Engine, Bodies, Composite, Events } = Matter;
+
+      const engine = Engine.create();
+      engine.world.gravity.y = 1.2;
+
+      const wallThickness = 60;
+
+      const groundY = height * 0.92 - emojiRadius;
+      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, { isStatic: true });
+
+      const wallPadding = width * 0.17 + emojiRadius;
+      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+
+      const leftLip = Bodies.rectangle(width * 0.2, height * 0.2, width * 0.25, 20, {
+        isStatic: true,
+        angle: Math.PI / 6
+      });
+      const rightLip = Bodies.rectangle(width * 0.8, height * 0.2, width * 0.25, 20, {
+        isStatic: true,
+        angle: -Math.PI / 6
+      });
+
+      Composite.add(engine.world, [ground, leftWall, rightWall, leftLip, rightLip]);
+
+      Events.on(engine, 'afterUpdate', () => {
+        const bodies = Composite.allBodies(engine.world);
+        bodies.forEach(body => {
+          if (body.domElement) {
+            const x = body.position.x - body.circleRadius;
+            const y = body.position.y - body.circleRadius;
+            body.domElement.style.transform = `translate(${x}px, ${y}px) rotate(${body.angle}rad)`;
+          }
+        });
+      });
+
+      function step() {
+        if (jarPhysics[jarId]) {
+          Engine.update(engine, 1000 / 60);
+          requestAnimationFrame(step);
+        }
+      }
+      requestAnimationFrame(step);
+
+      jarPhysics[jarId] = { engine, bodiesCount: 0 };
+    }
+
+    function addBouncingEmojiToJar(jarId, imgSrc, dropXRatio) {
+      const p = jarPhysics[jarId];
+      if (!p) return;
+
+      const { Bodies, Composite } = Matter;
+      const container = document.getElementById(jarId);
+      const width = container.clientWidth;
+
+      const imgEl = document.createElement('img');
+      imgEl.src = imgSrc;
+      imgEl.classList.add('jar-emoji');
+      container.appendChild(imgEl);
+
+      const cssWidth = imgEl.clientWidth || 30;
+      const ballRadius = cssWidth / 2;
+
+      const spawnX = Math.max(ballRadius * 2, Math.min(width - ballRadius * 2, dropXRatio * width));
+
+      const ball = Bodies.circle(spawnX, 20, ballRadius, {
+        restitution: 0.65,
+        friction: 0.3,
+        density: 0.05
+      });
+
+      ball.domElement = imgEl;
+      Composite.add(p.engine.world, ball);
+
+      p.bodiesCount++;
+      const category = container.getAttribute('data-category');
+      document.getElementById(`count-${category}`).textContent = p.bodiesCount;
+    }
+  </script>
+</body>
+
+</html>
