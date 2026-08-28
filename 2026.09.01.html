@@ -91,8 +91,8 @@
     /* Jar Overlay style */
     .jar-emoji {
       position: absolute;
-      width: 30px;
-      height: 30px;
+      width: 35px;
+      height: 35px;
       top: 0;
       left: 0;
       pointer-events: none;
@@ -259,6 +259,15 @@
       <div class="counter" id="count-excited">0</div>
       <div class="jar-label">興奮<br>Exicted</div>
     </div>
+    
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-eager" data-category="eager"></div>
+        <img src="imgs/不倒翁_頁面_5.png" class="tumbler-img" id="tumbler-eager" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-eager">0</div>
+      <div class="jar-label">期待<br>Eager</div>
+    </div>
 
     <div class="jar-wrapper">
       <div class="jar-container-inner">
@@ -269,14 +278,7 @@
       <div class="jar-label">緊張<br>Nervous</div>
     </div>
 
-    <div class="jar-wrapper">
-      <div class="jar-container-inner">
-        <div class="jar" id="jar-eager" data-category="eager"></div>
-        <img src="imgs/不倒翁_頁面_5.png" class="tumbler-img" id="tumbler-eager" alt="不倒翁">
-      </div>
-      <div class="counter" id="count-eager">0</div>
-      <div class="jar-label">期待<br>Eager</div>
-    </div>
+    
   </div>
 
   <!-- <button class="btn-reset" onclick="initBoard()">重設</button> -->
@@ -285,8 +287,9 @@
     const emojiData = [
       { src: 'imgs/happy.webp', label: '開心', category: 'happy' },
       { src: 'imgs/exicted.webp', label: '興奮', category: 'excited' },
+      { src: 'imgs/eager.webp', label: '期待', category: 'eager' },
       { src: 'imgs/nervous.webp', label: '緊張', category: 'nervous' },
-      { src: 'imgs/eager.webp', label: '期待', category: 'eager' }
+      
     ];
 
     const jarIds = ['jar-happy', 'jar-excited', 'jar-nervous', 'jar-eager'];
