@@ -644,24 +644,31 @@
         });
       });
 
-      // Collision event: Trigger sound EXACTLY when bodies touch walls or each other
       Events.on(engine, 'collisionStart', (event) => {
+        const p = jarPhysics[jarId];
+        if (!p || !p.lastDroppedBall) return;
+
         event.pairs.forEach(pair => {
-          // Calculate relative impact velocity
-          const speedA = pair.bodyA.speed || 0;
-          const speedB = pair.bodyB.speed || 0;
-          const impactSpeed = Math.max(speedA, speedB);
+          // Only process effects if the collision involves the LAST dropped emoji
+          const isLastBallInvolved = (pair.bodyA === p.lastDroppedBall || pair.bodyB === p.lastDroppedBall);
 
-          // Play sound only if impact is significant
-          if (impactSpeed > 1.5) {
-            playImpactSound(impactSpeed);
-          }
+          if (isLastBallInvolved) {
+            // 1. Calculate impact speed to dynamically scale cartoon sound volume/pitch
+            const speedA = pair.bodyA.speed || 0;
+            const speedB = pair.bodyB.speed || 0;
+            const impactSpeed = Math.max(speedA, speedB);
 
-          // If collision is between two emoji balls, trigger visual spark
-          if (pair.bodyA.domElement && pair.bodyB.domElement) {
-            const collisionX = (pair.bodyA.position.x + pair.bodyB.position.x) / 2;
-            const collisionY = (pair.bodyA.position.y + pair.bodyB.position.y) / 2;
-            createCollisionSpark(container, collisionX, collisionY);
+            // Play cartoon sound on significant impact
+            if (impactSpeed > 1.2) {
+              playImpactSound(impactSpeed);
+            }
+
+            // 2. Trigger spark animation ONLY when colliding with another emoji ball
+            if (pair.bodyA.domElement && pair.bodyB.domElement) {
+              const collisionX = (pair.bodyA.position.x + pair.bodyB.position.x) / 2;
+              const collisionY = (pair.bodyA.position.y + pair.bodyB.position.y) / 2;
+              createCollisionSpark(container, collisionX, collisionY);
+            }
           }
         });
       });
@@ -704,10 +711,12 @@
       ball.domElement = imgEl;
       Composite.add(p.engine.world, ball);
 
+      // Track the most recently dropped ball for performance filtering
+      p.lastDroppedBall = ball;
+
       p.bodiesCount++;
       const category = container.getAttribute('data-category');
       document.getElementById(`count-${category}`).textContent = p.bodiesCount;
-      // Note: playBounceSound() was removed from here so sound only triggers on physics collision
     }
   </script>
 </body>
