@@ -41,6 +41,218 @@
       z-index: -1;
     }
 
+    /* Bottom Action Area Container */
+    .bottom-bar-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    /* Arrow Toggle Button */
+    .arrow-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF9900 0%, #FF5500 100%);
+      color: #FFFFFF;
+      border: 3px solid #FFFFFF;
+      font-size: 1.8rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .arrow-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .arrow-btn.active {
+      transform: rotate(180deg);
+    }
+
+    /* Results Button (Initially Hidden/Collapsed) */
+    .results-btn {
+      background: linear-gradient(135deg, #FF9900 0%, #FF5500 100%);
+      color: #FFFFFF;
+      border: 3px solid #FFFFFF;
+      padding: 12px 28px;
+      font-size: 1.5rem;
+      font-weight: 900;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      /* Toggle Hidden State */
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.8);
+    }
+
+    .results-btn.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .results-btn:hover {
+      transform: scale(1.08);
+      background: linear-gradient(135deg, #FFB300 0%, #FF6600 100%);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .results-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Results Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: rgba(255, 255, 255, 0.95);
+      width: 90%;
+      max-width: 600px;
+      border-radius: 30px;
+      padding: 25px 35px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 0 0 5px #FF9900;
+      position: relative;
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+      background: linear-gradient(180deg, #FFE600 0%, #FF9900 60%, #FF5500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(2px 2px 0px #000) drop-shadow(-2px -2px 0px #000) drop-shadow(2px -2px 0px #000) drop-shadow(-2px 2px 0px #000);
+      text-align: center;
+    }
+
+    .total-badge {
+      background: #0284c7;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 5px 18px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .results-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .result-icon {
+      width: 50px;
+      height: 50px;
+      filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+    }
+
+    .result-info {
+      flex: 1;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 18px;
+      background: #E2E8F0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 10px;
+      transition: width 0.6s cubic-bezier(0.1, 0.5, 0.1, 1);
+    }
+
+    .fill-happy { background: linear-gradient(90deg, #FFDD00, #FF8800); }
+    .fill-excited { background: linear-gradient(90deg, #FF416C, #FF4B2B); }
+    .fill-eager { background: linear-gradient(90deg, #00B4DB, #0083B0); }
+    .fill-nervous { background: linear-gradient(90deg, #7F00FF, #E100FF); }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .close-btn:hover {
+      color: #FF3300;
+    }
+
     .emoji-pool {
       width: 95vw;
       height: 25vh;
@@ -88,7 +300,6 @@
         drop-shadow(2px 2px 0px #000000) drop-shadow(-2px -2px 0px #000000) drop-shadow(2px -2px 0px #000000) drop-shadow(-2px 2px 0px #000000) drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75));
     }
 
-    /* Jar Overlay style */
     .jar-emoji {
       position: absolute;
       width: 30px;
@@ -132,11 +343,7 @@
       -webkit-text-fill-color: transparent;
       filter:
         drop-shadow(2px 2px 0px #000000) drop-shadow(-2px -2px 0px #000000) drop-shadow(2px -2px 0px #000000) drop-shadow(-2px 2px 0px #000000) drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75));
-
       margin-bottom: 8px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
     }
 
     .jar-container-inner {
@@ -146,7 +353,6 @@
       position: relative;
     }
 
-    /* 不倒翁 Style */
     .tumbler-img {
       width: 160px;
       height: auto;
@@ -162,37 +368,6 @@
 
     .tumbler-img:hover {
       transform: translateX(-50%) scale(1.15) rotate(5deg);
-    }
-
-    /* Updated wobble keyframes to preserve horizontal centering */
-    @keyframes tumblerWobble {
-      0% {
-        transform: translateX(-50%) rotate(0deg);
-      }
-
-      15% {
-        transform: translateX(-50%) rotate(-15deg);
-      }
-
-      30% {
-        transform: translateX(-50%) rotate(20deg);
-      }
-
-      45% {
-        transform: translateX(-50%) rotate(-15deg);
-      }
-
-      60% {
-        transform: translateX(-50%) rotate(10deg);
-      }
-
-      75% {
-        transform: translateX(-50%) rotate(-5deg);
-      }
-
-      100% {
-        transform: translateX(-50%) rotate(0deg);
-      }
     }
 
     .jar {
@@ -224,21 +399,6 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
     }
 
-    .btn-reset {
-      position: absolute;
-      bottom: 12px;
-      right: 20px;
-      padding: 8px 16px;
-      background: #ffffff;
-      color: #0284c7;
-      border: 2px solid #0284c7;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Container for the spark centered at collision point */
     .collision-spark {
       position: absolute;
       width: 0;
@@ -247,7 +407,6 @@
       z-index: 20;
     }
 
-    /* 1. Central Cartoon Starburst Pop */
     .collision-spark::before {
       content: '';
       position: absolute;
@@ -256,15 +415,12 @@
       width: 36px;
       height: 36px;
       background: radial-gradient(circle, #ffffff 20%, #ffe600 65%, #ff5500 100%);
-      clip-path: polygon(50% 0%, 63% 33%, 98% 35%, 71% 58%,
-          82% 91%, 50% 72%, 18% 91%, 29% 58%,
-          2% 35%, 37% 33%);
+      clip-path: polygon(50% 0%, 63% 33%, 98% 35%, 71% 58%, 82% 91%, 50% 72%, 18% 91%, 29% 58%, 2% 35%, 37% 33%);
       filter: drop-shadow(0px 0px 6px rgba(255, 230, 0, 0.9));
       transform: translate(-50%, -50%) scale(0) rotate(0deg);
       animation: starBurst 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
 
-    /* 2. Expanding Shockwave Ring */
     .collision-spark::after {
       content: '';
       position: absolute;
@@ -279,7 +435,6 @@
       animation: wavePop 0.35s ease-out forwards;
     }
 
-    /* 3. Small Floating Dots / Particles */
     .collision-spark span {
       position: absolute;
       width: 8px;
@@ -290,66 +445,25 @@
       animation: particleBurst 0.35s ease-out forwards;
     }
 
-    .collision-spark span:nth-child(1) {
-      --dx: -28px;
-      --dy: -28px;
-    }
+    .collision-spark span:nth-child(1) { --dx: -28px; --dy: -28px; }
+    .collision-spark span:nth-child(2) { --dx: 28px; --dy: -28px; }
+    .collision-spark span:nth-child(3) { --dx: -28px; --dy: 28px; }
+    .collision-spark span:nth-child(4) { --dx: 28px; --dy: 28px; }
 
-    .collision-spark span:nth-child(2) {
-      --dx: 28px;
-      --dy: -28px;
-    }
-
-    .collision-spark span:nth-child(3) {
-      --dx: -28px;
-      --dy: 28px;
-    }
-
-    .collision-spark span:nth-child(4) {
-      --dx: 28px;
-      --dy: 28px;
-    }
-
-    /* Animations */
     @keyframes starBurst {
-      0% {
-        transform: translate(-50%, -50%) scale(0.2) rotate(-20deg);
-        opacity: 1;
-      }
-
-      60% {
-        transform: translate(-50%, -50%) scale(1.4) rotate(15deg);
-        opacity: 1;
-      }
-
-      100% {
-        transform: translate(-50%, -50%) scale(0.8) rotate(30deg);
-        opacity: 0;
-      }
+      0% { transform: translate(-50%, -50%) scale(0.2) rotate(-20deg); opacity: 1; }
+      60% { transform: translate(-50%, -50%) scale(1.4) rotate(15deg); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0.8) rotate(30deg); opacity: 0; }
     }
 
     @keyframes wavePop {
-      0% {
-        transform: translate(-50%, -50%) scale(0.2);
-        opacity: 1;
-      }
-
-      100% {
-        transform: translate(-50%, -50%) scale(1.8);
-        opacity: 0;
-      }
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
     }
 
     @keyframes particleBurst {
-      0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-      }
-
-      100% {
-        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0);
-        opacity: 0;
-      }
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
     }
   </style>
 </head>
@@ -396,6 +510,81 @@
     </div>
   </div>
 
+  <!-- Bottom Toggle Action Area -->
+  <div class="bottom-bar-container">
+    <button class="results-btn" id="resultsBtn" onclick="openResultsModal()">
+      <span>📊</span> 整體結果
+    </button>
+    <button class="arrow-btn" id="arrowToggleBtn" onclick="toggleResultsBtn()">▲</button>
+  </div>
+
+  <!-- Overall Results Modal Window -->
+  <div class="modal-overlay" id="resultsModal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeResultsModal()">&times;</button>
+      <div class="modal-title">整體結果 Results</div>
+      <div class="total-badge" id="totalVotesBadge">表情總數: 0</div>
+
+      <div class="results-list">
+        <!-- Happy -->
+        <div class="result-row">
+          <img src="imgs/happy.webp" class="result-icon">
+          <div class="result-info">
+            <div class="result-header">
+              <span>開心 Happy</span>
+              <span id="res-count-happy">0 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-happy" id="bar-happy"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Excited -->
+        <div class="result-row">
+          <img src="imgs/exicted.webp" class="result-icon">
+          <div class="result-info">
+            <div class="result-header">
+              <span>興奮 Excited</span>
+              <span id="res-count-excited">0 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-excited" id="bar-excited"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eager -->
+        <div class="result-row">
+          <img src="imgs/eager.webp" class="result-icon">
+          <div class="result-info">
+            <div class="result-header">
+              <span>期待 Eager</span>
+              <span id="res-count-eager">0 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-eager" id="bar-eager"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nervous -->
+        <div class="result-row">
+          <img src="imgs/nervous.webp" class="result-icon">
+          <div class="result-info">
+            <div class="result-header">
+              <span>緊張 Nervous</span>
+              <span id="res-count-nervous">0 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-nervous" id="bar-nervous"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const emojiData = [
       {src: 'imgs/happy.webp', label: '開心', category: 'happy'},
@@ -406,8 +595,17 @@
 
     const jarIds = ['jar-happy', 'jar-excited', 'jar-nervous', 'jar-eager'];
     const jarPhysics = {};
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     window.onload = initBoard;
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        jarIds.forEach(id => setupJarPhysics(id));
+      }, 250);
+    });
 
     function initBoard() {
       const pool = document.getElementById('emojiPool');
@@ -443,7 +641,44 @@
       });
     }
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    /* Bottom Button Toggle */
+    function toggleResultsBtn() {
+      const resBtn = document.getElementById('resultsBtn');
+      const arrowBtn = document.getElementById('arrowToggleBtn');
+
+      resBtn.classList.toggle('show');
+      arrowBtn.classList.toggle('active');
+    }
+
+    /* Modal Logic */
+    function openResultsModal() {
+      let total = 0;
+      const counts = {};
+
+      emojiData.forEach(item => {
+        const category = item.category;
+        const count = jarPhysics[`jar-${category}`]?.bodiesCount || 0;
+        counts[category] = count;
+        total += count;
+      });
+
+      document.getElementById('totalVotesBadge').textContent = `表情總數: ${total}`;
+
+      emojiData.forEach(item => {
+        const category = item.category;
+        const count = counts[category];
+        const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+
+        document.getElementById(`res-count-${category}`).textContent = `${count} (${percentage}%)`;
+        document.getElementById(`bar-${category}`).style.width = `${percentage}%`;
+      });
+
+      document.getElementById('resultsModal').classList.add('active');
+    }
+
+    function closeResultsModal() {
+      document.getElementById('resultsModal').classList.remove('active');
+    }
 
     function playImpactSound(velocity = 5) {
       if (audioCtx.state === 'suspended') {
@@ -453,12 +688,10 @@
       const intensity = Math.min(Math.max(velocity / 10, 0.3), 1);
       const now = audioCtx.currentTime;
 
-      // 1. Playful Boing/Bounce (Pitch glides rapidly upwards)
       const bounceOsc = audioCtx.createOscillator();
       const bounceGain = audioCtx.createGain();
 
       bounceOsc.type = 'sine';
-      // Start at low pitch, quickly sweep UP for cartoon spring effect
       bounceOsc.frequency.setValueAtTime(150 * intensity, now);
       bounceOsc.frequency.exponentialRampToValueAtTime(550 * intensity, now + 0.12);
 
@@ -470,7 +703,6 @@
       bounceOsc.start(now);
       bounceOsc.stop(now + 0.12);
 
-      // 2. Cartoon Woodblock / Pop Effect
       const popOsc = audioCtx.createOscillator();
       const popGain = audioCtx.createGain();
 
@@ -485,6 +717,13 @@
       popGain.connect(audioCtx.destination);
       popOsc.start(now);
       popOsc.stop(now + 0.05);
+
+      setTimeout(() => {
+        bounceOsc.disconnect();
+        bounceGain.disconnect();
+        popOsc.disconnect();
+        popGain.disconnect();
+      }, 150);
     }
 
     function createCollisionSpark(container, x, y) {
@@ -493,7 +732,6 @@
       spark.style.left = `${x}px`;
       spark.style.top = `${y}px`;
 
-      // Create 4 floating particle dots
       for (let i = 0; i < 4; i++) {
         const dot = document.createElement('span');
         spark.appendChild(dot);
@@ -594,33 +832,29 @@
       container.innerHTML = '';
 
       if (jarPhysics[jarId]) {
+        cancelAnimationFrame(jarPhysics[jarId].animId);
         Matter.Engine.clear(jarPhysics[jarId].engine);
         delete jarPhysics[jarId];
       }
 
       const width = container.clientWidth;
       const height = container.clientHeight;
+      const emojiRadius = 15;
 
-      const tempImg = document.createElement('img');
-      tempImg.classList.add('jar-emoji');
-      tempImg.style.visibility = 'hidden';
-      container.appendChild(tempImg);
-      const emojiRadius = (tempImg.clientWidth || 30) / 2;
-      container.removeChild(tempImg);
+      const { Engine, Bodies, Composite, Events } = Matter;
 
-      const {Engine, Bodies, Composite, Events} = Matter;
-
-      const engine = Engine.create();
+      const engine = Engine.create({
+        enableSleeping: true
+      });
       engine.world.gravity.y = 1.2;
 
       const wallThickness = 60;
-
       const groundY = height * 0.95 - emojiRadius;
-      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, {isStatic: true});
+      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, { isStatic: true });
 
       const wallPadding = width * 0.17 + emojiRadius;
-      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, {isStatic: true});
-      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, {isStatic: true});
+      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
 
       const leftLip = Bodies.rectangle(width * 0.2, height * 0.2, width * 0.25, 20, {
         isStatic: true,
@@ -646,28 +880,25 @@
 
       Events.on(engine, 'collisionStart', (event) => {
         const p = jarPhysics[jarId];
-        if (!p || !p.lastDroppedBall) return;
+        if (!p || !p.recentDroppedBalls || p.recentDroppedBalls.length === 0) return;
 
         event.pairs.forEach(pair => {
-          // Only process effects if the collision involves the LAST dropped emoji
-          const isLastBallInvolved = (pair.bodyA === p.lastDroppedBall || pair.bodyB === p.lastDroppedBall);
+          const isAInRecent = p.recentDroppedBalls.includes(pair.bodyA);
+          const isBInRecent = p.recentDroppedBalls.includes(pair.bodyB);
 
-          if (isLastBallInvolved) {
-            // 1. Calculate impact speed to dynamically scale cartoon sound volume/pitch
+          if (isAInRecent || isBInRecent) {
             const speedA = pair.bodyA.speed || 0;
             const speedB = pair.bodyB.speed || 0;
             const impactSpeed = Math.max(speedA, speedB);
 
-            // Play cartoon sound on significant impact
-            if (impactSpeed > 1.2) {
+            if (impactSpeed > 2.5) {
               playImpactSound(impactSpeed);
-            }
 
-            // 2. Trigger spark animation ONLY when colliding with another emoji ball
-            if (pair.bodyA.domElement && pair.bodyB.domElement) {
-              const collisionX = (pair.bodyA.position.x + pair.bodyB.position.x) / 2;
-              const collisionY = (pair.bodyA.position.y + pair.bodyB.position.y) / 2;
-              createCollisionSpark(container, collisionX, collisionY);
+              if (pair.bodyA.domElement && pair.bodyB.domElement) {
+                const collisionX = (pair.bodyA.position.x + pair.bodyB.position.x) / 2;
+                const collisionY = (pair.bodyA.position.y + pair.bodyB.position.y) / 2;
+                createCollisionSpark(container, collisionX, collisionY);
+              }
             }
           }
         });
@@ -676,19 +907,23 @@
       function step() {
         if (jarPhysics[jarId]) {
           Engine.update(engine, 1000 / 60);
-          requestAnimationFrame(step);
+          jarPhysics[jarId].animId = requestAnimationFrame(step);
         }
       }
-      requestAnimationFrame(step);
 
-      jarPhysics[jarId] = {engine, bodiesCount: 0};
+      jarPhysics[jarId] = {
+        engine,
+        bodiesCount: 0,
+        recentDroppedBalls: [],
+        animId: requestAnimationFrame(step)
+      };
     }
 
     function addBouncingEmojiToJar(jarId, imgSrc, dropXRatio) {
       const p = jarPhysics[jarId];
       if (!p) return;
 
-      const {Bodies, Composite} = Matter;
+      const { Bodies, Composite } = Matter;
       const container = document.getElementById(jarId);
       const width = container.clientWidth;
 
@@ -697,9 +932,7 @@
       imgEl.classList.add('jar-emoji');
       container.appendChild(imgEl);
 
-      const cssWidth = imgEl.clientWidth || 30;
-      const ballRadius = cssWidth / 2;
-
+      const ballRadius = 15;
       const spawnX = Math.max(ballRadius * 2, Math.min(width - ballRadius * 2, dropXRatio * width));
 
       const ball = Bodies.circle(spawnX, 20, ballRadius, {
@@ -711,8 +944,10 @@
       ball.domElement = imgEl;
       Composite.add(p.engine.world, ball);
 
-      // Track the most recently dropped ball for performance filtering
-      p.lastDroppedBall = ball;
+      p.recentDroppedBalls.push(ball);
+      if (p.recentDroppedBalls.length > 5) {
+        p.recentDroppedBalls.shift();
+      }
 
       p.bodiesCount++;
       const category = container.getAttribute('data-category');
