@@ -148,17 +148,15 @@
 
     /* 不倒翁 Style */
     .tumbler-img {
-      width: 130px;
+      width: 160px;
       height: auto;
       transform-origin: bottom center;
       position: absolute;
-      top: -130px;
-      /* Adjust this value if you want it closer or further from the bottle mouth */
-      left: 50%;
+      top: -200px;
+      left: 90%;
       transform: translateX(-50%);
       z-index: 10;
-      filter:
-        drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.8));
+      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.8));
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -400,10 +398,10 @@
 
   <script>
     const emojiData = [
-      { src: 'imgs/happy.webp', label: '開心', category: 'happy' },
-      { src: 'imgs/exicted.webp', label: '興奮', category: 'excited' },
-      { src: 'imgs/eager.webp', label: '期待', category: 'eager' },
-      { src: 'imgs/nervous.webp', label: '緊張', category: 'nervous' },
+      {src: 'imgs/happy.webp', label: '開心', category: 'happy'},
+      {src: 'imgs/exicted.webp', label: '興奮', category: 'excited'},
+      {src: 'imgs/eager.webp', label: '期待', category: 'eager'},
+      {src: 'imgs/nervous.webp', label: '緊張', category: 'nervous'},
     ];
 
     const jarIds = ['jar-happy', 'jar-excited', 'jar-nervous', 'jar-eager'];
@@ -610,7 +608,7 @@
       const emojiRadius = (tempImg.clientWidth || 30) / 2;
       container.removeChild(tempImg);
 
-      const { Engine, Bodies, Composite, Events } = Matter;
+      const {Engine, Bodies, Composite, Events} = Matter;
 
       const engine = Engine.create();
       engine.world.gravity.y = 1.2;
@@ -618,11 +616,11 @@
       const wallThickness = 60;
 
       const groundY = height * 0.95 - emojiRadius;
-      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, { isStatic: true });
+      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, {isStatic: true});
 
       const wallPadding = width * 0.17 + emojiRadius;
-      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
-      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, {isStatic: true});
+      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, {isStatic: true});
 
       const leftLip = Bodies.rectangle(width * 0.2, height * 0.2, width * 0.25, 20, {
         isStatic: true,
@@ -676,14 +674,14 @@
       }
       requestAnimationFrame(step);
 
-      jarPhysics[jarId] = { engine, bodiesCount: 0 };
+      jarPhysics[jarId] = {engine, bodiesCount: 0};
     }
 
     function addBouncingEmojiToJar(jarId, imgSrc, dropXRatio) {
       const p = jarPhysics[jarId];
       if (!p) return;
 
-      const { Bodies, Composite } = Matter;
+      const {Bodies, Composite} = Matter;
       const container = document.getElementById(jarId);
       const width = container.clientWidth;
 
