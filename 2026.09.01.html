@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>校園好精神開學日_心情</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+      touch-action: none;
+    }
+
+    html,
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(imgs/bg.png);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+    }
+
+    .emoji-pool {
+      width: 95vw;
+      height: 25vh;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 200px;
+      margin-left: 50px;
+    }
+
+    .emoji-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .floating-emoji {
+      width: 170px;
+      height: 170px;
+      cursor: grab;
+      user-select: none;
+      filter: drop-shadow(2px 2px 6px rgba(255, 255, 255, 0.9)) drop-shadow(2px 6px 10px rgba(0, 0, 0, 0.35));
+      transition: transform 0.15s ease-in-out;
+      z-index: 5;
+    }
+
+    .floating-emoji.dragging {
+      cursor: grabbing;
+      transform: scale(1.3);
+      z-index: 9999 !important;
+      position: fixed !important;
+      pointer-events: none !important;
+    }
+
+    .emoji-label {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-top: 6px;
+      letter-spacing: 1.5px;
+      background: linear-gradient(180deg, #FFE600 0%, #FF9900 60%, #FF5500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter:
+        drop-shadow(2px 2px 0px #000000) drop-shadow(-2px -2px 0px #000000) drop-shadow(2px -2px 0px #000000) drop-shadow(-2px 2px 0px #000000) drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75));
+    }
+
+    /* Jar Overlay style */
+    .jar-emoji {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      transform-origin: center center;
+    }
+
+    .jars-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 2vw;
+      width: 95vw;
+      flex-grow: 1;
+      align-items: flex-end;
+      padding-bottom: 130px;
+      padding-left: 50px;
+    }
+
+    .jar-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      flex: 1;
+    }
+
+    .jar-label {
+      position: absolute;
+      bottom: -120px;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1.25;
+      letter-spacing: 1.5px;
+      background: linear-gradient(180deg, #FFE600 0%, #FF9900 60%, #FF5500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter:
+        drop-shadow(2px 2px 0px #000000) drop-shadow(-2px -2px 0px #000000) drop-shadow(2px -2px 0px #000000) drop-shadow(-2px 2px 0px #000000) drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.75));
+
+      margin-bottom: 8px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .jar-container-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* 不倒翁 Style */
+    .tumbler-img {
+      width: 130px;
+      height: auto;
+      transform-origin: bottom center;
+      position: absolute;
+      top: -130px;
+      /* Adjust this value if you want it closer or further from the bottle mouth */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      filter:
+        drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.8));
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tumbler-img:hover {
+      transform: translateX(-50%) scale(1.15) rotate(5deg);
+    }
+
+    /* Updated wobble keyframes to preserve horizontal centering */
+    @keyframes tumblerWobble {
+      0% {
+        transform: translateX(-50%) rotate(0deg);
+      }
+
+      15% {
+        transform: translateX(-50%) rotate(-15deg);
+      }
+
+      30% {
+        transform: translateX(-50%) rotate(20deg);
+      }
+
+      45% {
+        transform: translateX(-50%) rotate(-15deg);
+      }
+
+      60% {
+        transform: translateX(-50%) rotate(10deg);
+      }
+
+      75% {
+        transform: translateX(-50%) rotate(-5deg);
+      }
+
+      100% {
+        transform: translateX(-50%) rotate(0deg);
+      }
+    }
+
+    .jar {
+      width: calc(25vw - 80px);
+      height: 40vh;
+      max-height: 500px;
+      position: relative;
+      transition: transform 0.2s;
+      background-image: url('imgs/bottle.gif');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(8px 8px 16px rgba(0, 0, 0, 0.25));
+    }
+
+    .jar.drag-over {
+      transform: scale(1.05);
+    }
+
+    .counter {
+      position: absolute;
+      bottom: 10px;
+      background: #0284c7;
+      color: white;
+      font-weight: 1000;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-reset {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      padding: 8px 16px;
+      background: #ffffff;
+      color: #0284c7;
+      border: 2px solid #0284c7;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Container for the spark centered at collision point */
+    .collision-spark {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* 1. Central Cartoon Starburst Pop */
+    .collision-spark::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle, #ffffff 20%, #ffe600 65%, #ff5500 100%);
+      clip-path: polygon(50% 0%, 63% 33%, 98% 35%, 71% 58%,
+          82% 91%, 50% 72%, 18% 91%, 29% 58%,
+          2% 35%, 37% 33%);
+      filter: drop-shadow(0px 0px 6px rgba(255, 230, 0, 0.9));
+      transform: translate(-50%, -50%) scale(0) rotate(0deg);
+      animation: starBurst 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* 2. Expanding Shockwave Ring */
+    .collision-spark::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 48px;
+      height: 48px;
+      border: 4px solid #ffe600;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff9900, inset 0 0 10px #ff9900;
+      transform: translate(-50%, -50%) scale(0);
+      animation: wavePop 0.35s ease-out forwards;
+    }
+
+    /* 3. Small Floating Dots / Particles */
+    .collision-spark span {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffe600;
+      box-shadow: 0 0 6px #ff5500;
+      animation: particleBurst 0.35s ease-out forwards;
+    }
+
+    .collision-spark span:nth-child(1) {
+      --dx: -28px;
+      --dy: -28px;
+    }
+
+    .collision-spark span:nth-child(2) {
+      --dx: 28px;
+      --dy: -28px;
+    }
+
+    .collision-spark span:nth-child(3) {
+      --dx: -28px;
+      --dy: 28px;
+    }
+
+    .collision-spark span:nth-child(4) {
+      --dx: 28px;
+      --dy: 28px;
+    }
+
+    /* Animations */
+    @keyframes starBurst {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2) rotate(-20deg);
+        opacity: 1;
+      }
+
+      60% {
+        transform: translate(-50%, -50%) scale(1.4) rotate(15deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(0.8) rotate(30deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes wavePop {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    @keyframes particleBurst {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="emoji-pool" id="emojiPool"></div>
+
+  <div class="jars-container">
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-happy" data-category="happy"></div>
+        <img src="imgs/不倒翁_頁面_1.png" class="tumbler-img" id="tumbler-happy" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-happy">0</div>
+      <div class="jar-label">開心<br>Happy</div>
+    </div>
+
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-excited" data-category="excited"></div>
+        <img src="imgs/不倒翁_頁面_3.png" class="tumbler-img" id="tumbler-excited" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-excited">0</div>
+      <div class="jar-label">興奮<br>Exicted</div>
+    </div>
+
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-eager" data-category="eager"></div>
+        <img src="imgs/不倒翁_頁面_5.png" class="tumbler-img" id="tumbler-eager" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-eager">0</div>
+      <div class="jar-label">期待<br>Eager</div>
+    </div>
+
+    <div class="jar-wrapper">
+      <div class="jar-container-inner">
+        <div class="jar" id="jar-nervous" data-category="nervous"></div>
+        <img src="imgs/不倒翁_頁面_4.png" class="tumbler-img" id="tumbler-nervous" alt="不倒翁">
+      </div>
+      <div class="counter" id="count-nervous">0</div>
+      <div class="jar-label">緊張<br>Nervous</div>
+    </div>
+  </div>
+
+  <script>
+    const emojiData = [
+      { src: 'imgs/happy.webp', label: '開心', category: 'happy' },
+      { src: 'imgs/exicted.webp', label: '興奮', category: 'excited' },
+      { src: 'imgs/eager.webp', label: '期待', category: 'eager' },
+      { src: 'imgs/nervous.webp', label: '緊張', category: 'nervous' },
+    ];
+
+    const jarIds = ['jar-happy', 'jar-excited', 'jar-nervous', 'jar-eager'];
+    const jarPhysics = {};
+
+    window.onload = initBoard;
+
+    function initBoard() {
+      const pool = document.getElementById('emojiPool');
+      pool.innerHTML = '';
+
+      document.querySelectorAll('.counter').forEach(el => el.textContent = '0');
+
+      jarIds.forEach(id => setupJarPhysics(id));
+
+      emojiData.forEach((data) => {
+        const itemWrapper = document.createElement('div');
+        itemWrapper.classList.add('emoji-item');
+
+        const label = document.createElement('div');
+        label.classList.add('emoji-label');
+        label.textContent = data.label;
+
+        const img = document.createElement('img');
+        img.classList.add('floating-emoji');
+        img.src = data.src;
+
+        const item = {
+          src: data.src,
+          category: data.category,
+          radius: 60
+        };
+
+        img.addEventListener('pointerdown', (e) => startPointerDrag(e, item));
+
+        itemWrapper.appendChild(label);
+        itemWrapper.appendChild(img);
+        pool.appendChild(itemWrapper);
+      });
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playImpactSound(velocity = 5) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const intensity = Math.min(Math.max(velocity / 10, 0.3), 1);
+      const now = audioCtx.currentTime;
+
+      // 1. Playful Boing/Bounce (Pitch glides rapidly upwards)
+      const bounceOsc = audioCtx.createOscillator();
+      const bounceGain = audioCtx.createGain();
+
+      bounceOsc.type = 'sine';
+      // Start at low pitch, quickly sweep UP for cartoon spring effect
+      bounceOsc.frequency.setValueAtTime(150 * intensity, now);
+      bounceOsc.frequency.exponentialRampToValueAtTime(550 * intensity, now + 0.12);
+
+      bounceGain.gain.setValueAtTime(0.5, now);
+      bounceGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+      bounceOsc.connect(bounceGain);
+      bounceGain.connect(audioCtx.destination);
+      bounceOsc.start(now);
+      bounceOsc.stop(now + 0.12);
+
+      // 2. Cartoon Woodblock / Pop Effect
+      const popOsc = audioCtx.createOscillator();
+      const popGain = audioCtx.createGain();
+
+      popOsc.type = 'triangle';
+      popOsc.frequency.setValueAtTime(800 * intensity, now);
+      popOsc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+
+      popGain.gain.setValueAtTime(0.4, now);
+      popGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      popOsc.connect(popGain);
+      popGain.connect(audioCtx.destination);
+      popOsc.start(now);
+      popOsc.stop(now + 0.05);
+    }
+
+    function createCollisionSpark(container, x, y) {
+      const spark = document.createElement('div');
+      spark.classList.add('collision-spark');
+      spark.style.left = `${x}px`;
+      spark.style.top = `${y}px`;
+
+      // Create 4 floating particle dots
+      for (let i = 0; i < 4; i++) {
+        const dot = document.createElement('span');
+        spark.appendChild(dot);
+      }
+
+      container.appendChild(spark);
+
+      setTimeout(() => {
+        spark.remove();
+      }, 350);
+    }
+
+    function startPointerDrag(e, item) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      e.preventDefault();
+
+      const dragClone = document.createElement('img');
+      dragClone.src = item.src;
+      dragClone.classList.add('floating-emoji', 'dragging');
+
+      dragClone.style.position = 'fixed';
+      dragClone.style.pointerEvents = 'none';
+      dragClone.style.zIndex = '9999';
+      document.body.appendChild(dragClone);
+
+      const pointerId = e.pointerId;
+
+      const updatePosition = (x, y) => {
+        dragClone.style.left = (x - item.radius) + 'px';
+        dragClone.style.top = (y - item.radius) + 'px';
+      };
+
+      updatePosition(e.clientX, e.clientY);
+
+      const onPointerMove = (moveEvt) => {
+        if (moveEvt.pointerId !== pointerId) return;
+        updatePosition(moveEvt.clientX, moveEvt.clientY);
+        checkJarHover(moveEvt.clientX, moveEvt.clientY, item.category);
+      };
+
+      const onPointerUp = (upEvt) => {
+        if (upEvt.pointerId !== pointerId) return;
+
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('pointercancel', onPointerUp);
+
+        const dropTarget = document.elementFromPoint(upEvt.clientX, upEvt.clientY);
+        const targetJar = dropTarget ? dropTarget.closest('.jar') : null;
+
+        if (targetJar) {
+          const jarCategory = targetJar.getAttribute('data-category');
+          if (jarCategory === item.category) {
+            const rect = targetJar.getBoundingClientRect();
+            const dropXRatio = (upEvt.clientX - rect.left) / rect.width;
+            addBouncingEmojiToJar(targetJar.id, item.src, dropXRatio);
+            triggerTumblerAnimation(jarCategory);
+          }
+        }
+
+        dragClone.remove();
+        clearJarHovers();
+      };
+
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+      window.addEventListener('pointercancel', onPointerUp);
+    }
+
+    function checkJarHover(clientX, clientY, emojiCategory) {
+      clearJarHovers();
+
+      const dropTarget = document.elementFromPoint(clientX, clientY);
+      const targetJar = dropTarget ? dropTarget.closest('.jar') : null;
+
+      if (targetJar && targetJar.getAttribute('data-category') === emojiCategory) {
+        targetJar.classList.add('drag-over');
+      }
+    }
+
+    function clearJarHovers() {
+      document.querySelectorAll('.jar').forEach(jar => jar.classList.remove('drag-over'));
+    }
+
+    function triggerTumblerAnimation(category) {
+      const tumbler = document.getElementById(`tumbler-${category}`);
+      if (tumbler) {
+        tumbler.classList.remove('wobble');
+        void tumbler.offsetWidth;
+        tumbler.classList.add('wobble');
+      }
+    }
+
+    function setupJarPhysics(jarId) {
+      const container = document.getElementById(jarId);
+      container.innerHTML = '';
+
+      if (jarPhysics[jarId]) {
+        Matter.Engine.clear(jarPhysics[jarId].engine);
+        delete jarPhysics[jarId];
+      }
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      const tempImg = document.createElement('img');
+      tempImg.classList.add('jar-emoji');
+      tempImg.style.visibility = 'hidden';
+      container.appendChild(tempImg);
+      const emojiRadius = (tempImg.clientWidth || 30) / 2;
+      container.removeChild(tempImg);
+
+      const { Engine, Bodies, Composite, Events } = Matter;
+
+      const engine = Engine.create();
+      engine.world.gravity.y = 1.2;
+
+      const wallThickness = 60;
+
+      const groundY = height * 0.95 - emojiRadius;
+      const ground = Bodies.rectangle(width / 2, groundY + wallThickness / 2, width * 0.85, wallThickness, { isStatic: true });
+
+      const wallPadding = width * 0.17 + emojiRadius;
+      const leftWall = Bodies.rectangle(wallPadding - wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+      const rightWall = Bodies.rectangle(width - wallPadding + wallThickness / 2, height * 0.55, wallThickness, height * 0.7, { isStatic: true });
+
+      const leftLip = Bodies.rectangle(width * 0.2, height * 0.2, width * 0.25, 20, {
+        isStatic: true,
+        angle: Math.PI / 6
+      });
+      const rightLip = Bodies.rectangle(width * 0.8, height * 0.2, width * 0.25, 20, {
+        isStatic: true,
+        angle: -Math.PI / 6
+      });
+
+      Composite.add(engine.world, [ground, leftWall, rightWall, leftLip, rightLip]);
+
+      Events.on(engine, 'afterUpdate', () => {
+        const bodies = Composite.allBodies(engine.world);
+        bodies.forEach(body => {
+          if (body.domElement) {
+            const x = body.position.x - body.circleRadius;
+            const y = body.position.y - body.circleRadius;
+            body.domElement.style.transform = `translate(${x}px, ${y}px) rotate(${body.angle}rad)`;
+          }
+        });
+      });
+
+      // Collision event: Trigger sound EXACTLY when bodies touch walls or each other
+      Events.on(engine, 'collisionStart', (event) => {
+        event.pairs.forEach(pair => {
+          // Calculate relative impact velocity
+          const speedA = pair.bodyA.speed || 0;
+          const speedB = pair.bodyB.speed || 0;
+          const impactSpeed = Math.max(speedA, speedB);
+
+          // Play sound only if impact is significant
+          if (impactSpeed > 1.5) {
+            playImpactSound(impactSpeed);
+          }
+
+          // If collision is between two emoji balls, trigger visual spark
+          if (pair.bodyA.domElement && pair.bodyB.domElement) {
+            const collisionX = (pair.bodyA.position.x + pair.bodyB.position.x) / 2;
+            const collisionY = (pair.bodyA.position.y + pair.bodyB.position.y) / 2;
+            createCollisionSpark(container, collisionX, collisionY);
+          }
+        });
+      });
+
+      function step() {
+        if (jarPhysics[jarId]) {
+          Engine.update(engine, 1000 / 60);
+          requestAnimationFrame(step);
+        }
+      }
+      requestAnimationFrame(step);
+
+      jarPhysics[jarId] = { engine, bodiesCount: 0 };
+    }
+
+    function addBouncingEmojiToJar(jarId, imgSrc, dropXRatio) {
+      const p = jarPhysics[jarId];
+      if (!p) return;
+
+      const { Bodies, Composite } = Matter;
+      const container = document.getElementById(jarId);
+      const width = container.clientWidth;
+
+      const imgEl = document.createElement('img');
+      imgEl.src = imgSrc;
+      imgEl.classList.add('jar-emoji');
+      container.appendChild(imgEl);
+
+      const cssWidth = imgEl.clientWidth || 30;
+      const ballRadius = cssWidth / 2;
+
+      const spawnX = Math.max(ballRadius * 2, Math.min(width - ballRadius * 2, dropXRatio * width));
+
+      const ball = Bodies.circle(spawnX, 20, ballRadius, {
+        restitution: 0.65,
+        friction: 0.3,
+        density: 0.05
+      });
+
+      ball.domElement = imgEl;
+      Composite.add(p.engine.world, ball);
+
+      p.bodiesCount++;
+      const category = container.getAttribute('data-category');
+      document.getElementById(`count-${category}`).textContent = p.bodiesCount;
+      // Note: playBounceSound() was removed from here so sound only triggers on physics collision
+    }
+  </script>
+</body>
+
+</html>
